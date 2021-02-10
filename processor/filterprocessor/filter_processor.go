@@ -36,7 +36,7 @@ type filterMetricProcessor struct {
 	logger           *zap.Logger
 }
 
-func newFilterMetricProcessor(logger *zap.Logger, cfg *Config) (*filterMetricProcessor, error) {
+func newFilterProcessor(logger *zap.Logger, cfg *Config) (*filterMetricProcessor, error) {
 
 	inc, includeAttr, err := createMatcher(cfg.Metrics.Include)
 	if err != nil {
@@ -111,6 +111,43 @@ func createMatcher(mp *filtermetric.MatchProperties) (filtermetric.Matcher, filt
 
 	nameMatcher, err := filtermetric.NewMatcher(mp)
 	return nameMatcher, attributeMatcher, err
+}
+
+// ProcessTraces filters the given traces based off the filterMetricProcessor's filters.
+func (fmp *filterMetricProcessor) ProcessTraces(_ context.Context, pdt pdata.Traces) (pdata.Traces, error) {
+	fTraces := pdata.NewTraces()
+	rss := pdt.ResourceSpans()
+
+
+	for i := 0; i < rss.Len(); i++ {
+		rs := rss.At(i)
+
+		frs := pdata.NewResourceSpans()
+		fTraces.ResourceSpans().Append(frs)
+
+		rs.Resource().CopyTo(frs.Resource())
+
+		ilss := rs.InstrumentationLibrarySpans()
+		for j := 0; j < ilss.Len(); j++ {
+			ils := ilss.At(j)
+			fils := pdata.NewInstrumentationLibrarySpans()
+
+			frs.InstrumentationLibrarySpans().Append(fils)
+			ils.InstrumentationLibrary().CopyTo(fils.InstrumentationLibrary())
+
+			ss := ils.Spans()
+			for k := 0; k < ss.Len(); k++ {
+				s := ss.At(k)
+				// drop
+				if s.Name() == "/checkout" {
+					continue
+				}
+				fils.Spans().Append(s)
+			}
+		}
+	}
+	// .CopyTo(newTracesResources)
+	return fTraces, nil
 }
 
 // ProcessMetrics filters the given metrics based off the filterMetricProcessor's filters.

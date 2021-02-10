@@ -23,6 +23,7 @@ import (
 type Config struct {
 	configmodels.ProcessorSettings `mapstructure:",squash"`
 	Metrics                        MetricFilters `mapstructure:"metrics"`
+	Spans MetricFilters `mapstructure:"spans"`
 }
 
 // MetricFilter filters by Metric properties.

@@ -45,6 +45,10 @@ type MatchProperties struct {
 
 	// MetricNames specifies the list of string patterns to match metric names against.
 	// A match occurs if the metric name matches at least one string pattern in this list.
+	SpanNames []string `mapstructure:"span_names"`
+
+	// MetricNames specifies the list of string patterns to match metric names against.
+	// A match occurs if the metric name matches at least one string pattern in this list.
 	MetricNames []string `mapstructure:"metric_names"`
 
 	// Expressions specifies the list of expr expressions to match metrics against.
