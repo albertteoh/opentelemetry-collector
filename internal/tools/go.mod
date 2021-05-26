@@ -12,6 +12,6 @@ require (
 	github.com/pavius/impi v0.0.3
 	github.com/securego/gosec/v2 v2.5.0
 	github.com/tcnksm/ghr v0.13.0
-	golang.org/x/tools v0.0.0-20201111224557-41a3a589386c
-	honnef.co/go/tools v0.0.1-2020.1.6
+	golang.org/x/tools v0.1.0
+	honnef.co/go/tools v0.3.0-0.dev
 )
